@@ -1,0 +1,27 @@
+spring:
+  zipkin:
+    base-url: http://localhost:9411/
+    sender:
+      type: web
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  application:
+    name: future-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        fail-fast: false
+      config:
+        server-addr: localhost:8848
+        access-key: VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg
+        import-check:
+          enabled: false
+      username: nacos
+      password: xiacf17.
+server:
+  port: 7778
