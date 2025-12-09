@@ -3,9 +3,11 @@ package com.example.future.service.impl;
 import com.example.future.service.CompletableFutureService;
 import com.example.future.util.CallableVoid;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
@@ -57,16 +59,25 @@ public class CompletableFutureServiceImpl implements CompletableFutureService {
      * @return CompletableFuture异步任务对象
      */
     public <T> CompletableFuture<T> callAsync(Callable<T> callable) {
+        // 获取当前线程的MDC上下文
+        Map<String, String> contextMap = MDC.getCopyOfContextMap();
         //将 Callable 包装成 Supplier 以适配 CompletableFuture.supplyAsync()
         //Supplier它主要用于提供数据，不接受任何参数，但返回一个结果。
         //当 CompletableFuture.supplyAsync 调度执行时，会调用 supplier.get()，进而执行 callable.call()
         Supplier<T> supplier = () -> {
             try {
+                // 在新线程中设置MDC上下文
+                if (contextMap != null) {
+                    MDC.setContextMap(contextMap);
+                }
                 // 实际执行任务的地方
                 return callable.call();
             } catch (Exception e) {
                 // 将检查异常转换为运行时异常
                 throw new RuntimeException(e);
+            } finally {
+                // 清理MDC上下文
+                MDC.clear();
             }
         };
 

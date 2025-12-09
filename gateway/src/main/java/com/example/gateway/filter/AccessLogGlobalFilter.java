@@ -24,6 +24,7 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
         //filter的前置处理
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().pathWithinApplication().value();
